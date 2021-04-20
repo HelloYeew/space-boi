@@ -53,20 +53,25 @@ class SpaceGame(GameApp):
         if self.bomb_power == BOMB_FULL_POWER:
             self.bomb_power = 0
 
-            self.bomb_canvas_id = self.canvas.create_oval(
-                self.ship.x - BOMB_RADIUS, 
-                self.ship.y - BOMB_RADIUS,
-                self.ship.x + BOMB_RADIUS, 
-                self.ship.y + BOMB_RADIUS
-            )
+            self.bomb_work()
 
-            self.after(200, lambda: self.canvas.delete(self.bomb_canvas_id))
-
-            for e in self.enemies:
-                if self.ship.distance_to(e) <= BOMB_RADIUS:
-                    e.to_be_deleted = True
+            self.delete_enemies()
 
             self.update_bomb_power_text()
+
+    def bomb_work(self):
+        self.bomb_canvas_id = self.canvas.create_oval(
+            self.ship.x - BOMB_RADIUS,
+            self.ship.y - BOMB_RADIUS,
+            self.ship.x + BOMB_RADIUS,
+            self.ship.y + BOMB_RADIUS
+        )
+        self.after(200, lambda: self.canvas.delete(self.bomb_canvas_id))
+
+    def delete_enemies(self):
+        for e in self.enemies:
+            if self.ship.distance_to(e) <= BOMB_RADIUS:
+                e.to_be_deleted = True
 
     def update_bomb_power_text(self):
         self.bomb_power_text.set_text('Power: %d%%' % self.bomb_power)
@@ -166,22 +171,6 @@ class SpaceGame(GameApp):
 
         self.update_score()
         self.update_bomb_power()
-
-    # def on_key_pressed(self, event):
-    #     if event.keysym == 'Left':
-    #         self.ship.start_turn('LEFT')
-    #     elif event.keysym == 'Right':
-    #         self.ship.start_turn('RIGHT')
-    #     elif event.char == ' ':
-    #         self.ship.fire()
-    #     elif event.char.upper() == 'Z':
-    #         self.bomb()
-    #
-    # def on_key_released(self, event):
-    #     if event.keysym == 'Left':
-    #         self.ship.stop_turn('LEFT')
-    #     elif event.keysym == 'Right':
-    #         self.ship.stop_turn('RIGHT')
 
     def init_key_handlers(self):
         key_pressed_handler = ShipMovementKeyPressedHandler(self, self.ship)
